@@ -2,14 +2,26 @@
   "name": "chaiaurcodebackend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+  "start": "node -r dotenv/config src/index.js"
+},
+
   "repository": {
     "type": "git",
     "url": "https://github.com/arundabhi/Chai-Aur-Code.git"
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.18.2"
+  }
 }
