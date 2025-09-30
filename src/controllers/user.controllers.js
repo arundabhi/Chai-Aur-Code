@@ -4,6 +4,7 @@ import { User } from "../models/user.models.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 const options = {
   httpOnly: true,
   secure: true,
@@ -174,7 +175,9 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
 })
 
 const changePassword = asyncHandler(async(req,res)=>{
-    const {oldPassword,newPassword} = req.body;
+    const {oldPassword,newPassword} = await req.body;
+    console.log(oldPassword,newPassword);
+    
     const user = await User.findById(req.user?._id);
     const isOldPassword = await user.matchPassword(oldPassword);
 
@@ -184,11 +187,11 @@ const changePassword = asyncHandler(async(req,res)=>{
     user.password = newPassword
     await user.save({validateBeforeSave:false});
     
-    return res.status(200).json(new ApiError(200,{},"Password changed succesfully"))
+    return res.status(200).json(new ApiResponse(200,{user},"Password changed succesfully"))
 })
 
 const getCurrentUser = asyncHandler(async(req,res)=>{
-    return res.status(200).json(200,req.user,"Current user fetched succesfully")
+    return res.status(200).json(new ApiResponse(200,req.user,"Current user fetched succesfully"))
 })
 
 const updateAccountDetails = asyncHandler(async(req,res)=>{
@@ -227,7 +230,7 @@ const updateUserAvatar = asyncHandler(async(req,res)=>{
 })
 
 const updateUserCoverImage = asyncHandler(async(req,res)=>{
-    const coverImageLocalPath = req.file?.path;
+    const coverImageLocalPath = await req.file?.path;
 
     if(!coverImageLocalPath){
         throw new ApiError(400,"CoverImage doesnt exits")
@@ -237,11 +240,11 @@ const updateUserCoverImage = asyncHandler(async(req,res)=>{
         throw new ApiError(401,"Error while uploading Cover image")
     }
 
-    const user = User.findByIdAndUpdate(req.user?._id,{
+    const user = await User.findByIdAndUpdate(req.user?._id,{
         coverImage:coverImage.url
     },{new:true}).select('-password')
 
-    return res.status(200).json(new ApiError(200,user,'CoverImage updated succesfully'))
+    return res.status(200).json(new ApiResponse(200,{user},'CoverImage updated succesfully'))
 })
 
 const getChanelUserProfile = asyncHandler(async(req,res)=>{
@@ -316,6 +319,7 @@ const getWatchedhistory = asyncHandler(async(req,res)=>{
     {
       $match:{
         _id: new mongoose.Types.ObjectId(req.user._id)
+        
       }
     },
     {

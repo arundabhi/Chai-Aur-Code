@@ -20,7 +20,7 @@ router.route('/register').post(
 );
 
 router.route('/login').post(loginUser)
-router.route('/refresh-token').post(refreshAccessToken)
+router.route('/refresh-token').get(refreshAccessToken)
 router.route('/update-user-avatar').patch(verifyJWT,upload.single('avatar'),updateUserAvatar)
 router.route('/update-user-coverImage').patch(verifyJWT,upload.single('coverImage'),updateUserCoverImage)
 router.route('/update-user-details').patch(verifyJWT,updateAccountDetails)
